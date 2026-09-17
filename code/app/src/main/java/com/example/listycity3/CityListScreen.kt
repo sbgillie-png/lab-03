@@ -30,11 +30,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 fun CityListScreen(
     cities: List<City>,
     onAddCity: (City) -> Unit,
+    onRemoveCity: (City) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var newCityName by remember { mutableStateOf("") }
     var newProvinceName by remember { mutableStateOf("") }
     var showAddCityFields by remember { mutableStateOf(false) }
+
+    var oldCityName by remember { mutableStateOf("") }
+    var oldProvinceName by remember { mutableStateOf("") }
+    var diffCityName by remember { mutableStateOf("") }
+    var diffProvinceName by remember { mutableStateOf("") }
+    var showDiffCityFields by remember { mutableStateOf(false) }
     Column(modifier = modifier.fillMaxSize()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -49,6 +56,20 @@ fun CityListScreen(
                 Text("+")
             }
         }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            FloatingActionButton(
+                modifier = Modifier.padding(16.dp),
+                onClick = {
+                    showDiffCityFields = !showDiffCityFields
+                }
+            ) {
+                Text("Edit")
+            }
+        }
+
 
         if (showAddCityFields) {
             Row(
@@ -93,6 +114,73 @@ fun CityListScreen(
             }
         }
 
+        if (showDiffCityFields) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                OutlinedTextField(
+                    value = oldCityName,
+                    onValueChange = { oldCityName = it },
+                    label = { Text("Old City") },
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                OutlinedTextField(
+                    value = oldProvinceName,
+                    onValueChange = { oldProvinceName = it },
+                    label = { Text("Old Province") },
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                OutlinedTextField(
+                    value = diffCityName,
+                    onValueChange = { diffCityName = it },
+                    label = { Text("City") },
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                OutlinedTextField(
+                    value = diffProvinceName,
+                    onValueChange = { diffProvinceName = it },
+                    label = { Text("Province") },
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Button(
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    onClick = {
+                        if (diffCityName.isNotBlank() && oldCityName.isNotBlank()) {
+                            onAddCity(
+                                City(
+                                    name = diffCityName,
+                                    province = diffProvinceName
+                                )
+                            )
+                            onRemoveCity(
+                                City(oldCityName,oldProvinceName)
+                            )
+
+
+
+                            diffCityName = ""
+                            diffProvinceName = ""
+                            oldCityName = ""
+                            oldProvinceName = ""
+                            showDiffCityFields = false
+                        }
+                    }
+                ) {
+                    Text("Change")
+                }
+
+
+            }
+        }
+
+
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             itemsIndexed(cities) { index, city ->
                 CityRow(city = city)
@@ -136,7 +224,8 @@ fun CityListScreenPreview() {
                 City("Vancouver", "BC"),
                 City("Calgary", "AB")
             ),
-                    onAddCity = {}
+                    onAddCity = {},
+                    onRemoveCity = {}
         )
     }
 }
