@@ -224,8 +224,8 @@ fun CityListScreenPreview() {
                 City("Vancouver", "BC"),
                 City("Calgary", "AB")
             ),
-                    onAddCity = {},
-                    onRemoveCity = {}
+            onAddCity = {},
+            onRemoveCity = {}
         )
     }
 }
